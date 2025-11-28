@@ -1,0 +1,6 @@
+@Beyond.Todo.WebApi_HostAddress = http://localhost:5042
+
+GET {{Beyond.Todo.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
