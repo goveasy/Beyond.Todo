@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Project Path="Beyond.Todo.Application/Beyond.Todo.Application.csproj" Id="6753ba4d-e5c1-4eea-a7f4-3b5c93f2e12c" />
+  <Project Path="Beyond.Todo.Domain/Beyond.Todo.Domain.csproj" Id="5f8d0c33-7a91-4b09-9aaa-738f944a3f40" />
+  <Project Path="Beyond.Todo.Infraestructure/Beyond.Todo.Infraestructure.csproj" Id="bbc6cd1d-147f-4231-b247-445697d1db78" />
+  <Project Path="Beyond.Todo.WebApi/Beyond.Todo.WebApi.csproj" Id="9dcdea59-e7cf-4b4a-8026-c05c1d1c9edf" />
+</Solution>

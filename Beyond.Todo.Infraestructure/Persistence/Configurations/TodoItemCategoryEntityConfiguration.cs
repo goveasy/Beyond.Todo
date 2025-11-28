@@ -12,5 +12,7 @@ public class TodoItemCategoryEntityConfiguration : IEntityTypeConfiguration<Todo
 
         builder.Property(c => c.Category)
             .IsRequired().ValueGeneratedNever();
+
+        builder.HasData(new TodoItemCategory() { Category="Work"}, new TodoItemCategory() { Category = "Personal" }, new TodoItemCategory() { Category = "Learning" });
     }
 }

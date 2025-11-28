@@ -24,7 +24,7 @@ public static class DependencyInjection
         services.AddScoped<CreateTodoItemHandler>();
         services.AddScoped<UpdateTodoItemDescriptionHandler>();
         services.AddScoped<RemoveTodoItemHandler>();
-
+        services.AddScoped<RegisterTodoItemProgressionHandler>();
 
         return services;
     }
