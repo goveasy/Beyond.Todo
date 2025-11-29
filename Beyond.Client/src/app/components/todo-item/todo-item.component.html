@@ -1,0 +1,67 @@
+<mat-card class="todo-card">
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <div class="summary">
+          <div class="title-group">
+            <div class="title-row">
+              <span class="title">{{ todo.title }}</span>
+              <span *ngIf="todo.isCompleted" class="badge success">Completado</span>
+            </div>
+            <div class="meta">Categoría: {{ todo.category }}</div>
+            <div class="description">{{ todo.description }}</div>
+          </div>
+          <div class="status-group">
+            <div class="progress-row">
+              <mat-progress-bar [value]="todo.cumulativePercent"></mat-progress-bar>
+              <span class="progress-label">{{ progressLabel }}</span>
+              <mat-progress-spinner *ngIf="refreshing"
+                                    diameter="20"
+                                    strokeWidth="3"
+                                    mode="indeterminate"></mat-progress-spinner>
+            </div>
+            <div class="actions">
+              <button mat-icon-button color="primary" (click)="$event.stopPropagation(); addProgression.emit(todo)"
+                      [disabled]="registeringProgression || refreshing">
+                <mat-icon *ngIf="!registeringProgression">add</mat-icon>
+                <mat-progress-spinner *ngIf="registeringProgression"
+                                      diameter="24"
+                                      mode="indeterminate"></mat-progress-spinner>
+              </button>
+              <button mat-icon-button color="accent" (click)="$event.stopPropagation(); editDescription.emit(todo)"
+                      [disabled]="updatingDescription || refreshing">
+                <mat-icon *ngIf="!updatingDescription">edit</mat-icon>
+                <mat-progress-spinner *ngIf="updatingDescription"
+                                      diameter="24"
+                                      mode="indeterminate"></mat-progress-spinner>
+              </button>
+              <button mat-icon-button color="warn" (click)="$event.stopPropagation(); delete.emit(todo)"
+                      [disabled]="deleting || refreshing">
+                <mat-icon *ngIf="!deleting">delete</mat-icon>
+                <mat-progress-spinner *ngIf="deleting"
+                                      diameter="24"
+                                      mode="indeterminate"></mat-progress-spinner>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel-header>
+
+      <div class="content">
+        <div class="progression-title">Progresiones</div>
+        <ng-container *ngIf="todo.progressions?.length; else emptyProgressions">
+          <div class="progression" *ngFor="let progression of todo.progressions">
+            <div class="progression-info">
+              <div class="date">{{ progression.date | date:'mediumDate' }}</div>
+              <div class="percent">{{ progression.percent }}%</div>
+            </div>
+            <mat-progress-bar color="accent" [value]="progression.percent"></mat-progress-bar>
+          </div>
+        </ng-container>
+        <ng-template #emptyProgressions>
+          <div class="empty">Sin progresiones registradas</div>
+        </ng-template>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-card>

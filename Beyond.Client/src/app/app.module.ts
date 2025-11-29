@@ -8,6 +8,13 @@ import {HttpClientModule} from "@angular/common/http";
 import {DatePipe} from "@angular/common";
 import {DEFAULT_DIALOG_CONFIG} from "@angular/cdk/dialog";
 import { TodoItemsPageComponent } from './pages/todo-items-page/todo-items-page.component';
+import { TodoItemComponent } from './components/todo-item/todo-item.component';
+import { TodoItemListComponent } from './components/todo-item-list/todo-item-list.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TodoItemDialogComponent } from './dialogs/todo-item-dialog/todo-item-dialog.component';
+import { ProgressionDialogComponent } from './dialogs/progression-dialog/progression-dialog.component';
+import { EditDescriptionDialogComponent } from './dialogs/edit-description-dialog/edit-description-dialog.component';
+import { ConfirmDialogComponent } from './dialogs/confirm-dialog/confirm-dialog.component';
 
 
 
@@ -15,7 +22,13 @@ import { TodoItemsPageComponent } from './pages/todo-items-page/todo-items-page.
 @NgModule({
   declarations: [
     AppComponent,
-    TodoItemsPageComponent
+    TodoItemsPageComponent,
+    TodoItemComponent,
+    TodoItemListComponent,
+    TodoItemDialogComponent,
+    ProgressionDialogComponent,
+    EditDescriptionDialogComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     MaterialModule,
@@ -23,6 +36,7 @@ import { TodoItemsPageComponent } from './pages/todo-items-page/todo-items-page.
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    ReactiveFormsModule,
 
   ],
   providers: [DatePipe,

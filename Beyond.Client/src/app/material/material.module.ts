@@ -17,6 +17,8 @@ import {MatMenuModule} from "@angular/material/menu";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatExpansionModule} from "@angular/material/expansion";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 
 
@@ -40,7 +42,9 @@ import {MatExpansionModule} from "@angular/material/expansion";
     MatMenuModule,
     MatTooltipModule,
     MatDialogModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatProgressBarModule,
+    MatSnackBarModule
   ],
   exports:[
     MatButtonToggleModule,
@@ -61,7 +65,9 @@ import {MatExpansionModule} from "@angular/material/expansion";
     MatMenuModule,
     MatTooltipModule,
     MatDialogModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatProgressBarModule,
+    MatSnackBarModule
   ],
   providers: [
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}}
