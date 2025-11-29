@@ -65,7 +65,7 @@ public sealed class TodoItem
         _progressions.Add(progression);
     }
 
-    private decimal GetCumulativePercent() => _progressions.Sum(p => p.Percent);
+    public decimal GetCumulativePercent() => _progressions.Sum(p => p.Percent);
 
     private bool IsLocked() => GetCumulativePercent() > 50;
 }
