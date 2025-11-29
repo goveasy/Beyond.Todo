@@ -33,3 +33,10 @@ h2 {
 h3 {
   font-size: 18px;
 }
+
+.mat-mdc-dialog-surface,
+.mat-dialog-container {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}

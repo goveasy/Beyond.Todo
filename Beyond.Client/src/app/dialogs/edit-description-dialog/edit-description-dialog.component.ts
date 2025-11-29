@@ -14,7 +14,7 @@ export interface EditDescriptionDialogData {
 })
 export class EditDescriptionDialogComponent {
   form = this.fb.group({
-    description: [this.data.description, Validators.required]
+    newDescription: [this.data.description, Validators.required]
   });
 
   constructor(
