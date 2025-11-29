@@ -1,0 +1,12 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 380px;
+  max-width: 100%;
+}
+
+.subtitle {
+  margin-bottom: 8px;
+  color: #616161;
+}

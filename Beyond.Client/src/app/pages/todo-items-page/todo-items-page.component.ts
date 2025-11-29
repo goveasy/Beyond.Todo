@@ -1,4 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  CreateTodoItemRequest,
+  RegisterProgressionRequest,
+  TodoItemDto,
+  UpdateDescriptionRequest
+} from '../../models/todo-item.models';
+import { TodoItemsService } from '../../services/todo-items.service';
+import { TodoItemDialogComponent, TodoItemDialogData } from '../../dialogs/todo-item-dialog/todo-item-dialog.component';
+import {
+  EditDescriptionDialogComponent,
+  EditDescriptionDialogData
+} from '../../dialogs/edit-description-dialog/edit-description-dialog.component';
+import { ProgressionDialogComponent, ProgressionDialogData } from '../../dialogs/progression-dialog/progression-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-todo-items-page',
@@ -6,10 +22,181 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./todo-items-page.component.scss']
 })
 export class TodoItemsPageComponent implements OnInit {
+  todoItems: TodoItemDto[] = [];
+  categories: string[] = [];
 
-  constructor() { }
+  loadingList = false;
+  creatingTodo = false;
+  registeringMap: Record<number, boolean> = {};
+  updatingMap: Record<number, boolean> = {};
+  deletingMap: Record<number, boolean> = {};
+  refreshingMap: Record<number, boolean> = {};
+
+  constructor(
+    private readonly todoItemsService: TodoItemsService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
+    this.loadTodoItems();
   }
 
+  loadTodoItems(showLoader = true): void {
+    if (showLoader) {
+      this.loadingList = true;
+    }
+
+    this.todoItemsService
+      .getTodoItems()
+      .subscribe({
+        next: (items) => {
+          this.todoItems = items;
+        },
+        error: (error) => this.showError(error),
+        complete: () => (this.loadingList = false)
+      });
+  }
+
+  loadCategories(): void {
+    this.todoItemsService.getCategories().subscribe({
+      next: (categories) => (this.categories = categories ?? []),
+      error: (error) => this.showError(error)
+    });
+  }
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open<TodoItemDialogComponent, TodoItemDialogData>(TodoItemDialogComponent, {
+      width: '520px',
+      data: { categories: this.categories }
+    });
+
+    dialogRef.afterClosed().subscribe((value?: CreateTodoItemRequest) => {
+      if (!value) {
+        return;
+      }
+      this.createTodoItem(value);
+    });
+  }
+
+  createTodoItem(request: CreateTodoItemRequest): void {
+    this.creatingTodo = true;
+    this.todoItemsService
+      .createTodoItem(request)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Tarea creada', 'Cerrar', { duration: 2500 });
+          this.loadTodoItems(false);
+        },
+        error: (error) => this.showError(error),
+        complete: () => (this.creatingTodo = false)
+      });
+  }
+
+  onRegisterProgression(todo: TodoItemDto): void {
+    const dialogRef = this.dialog.open<ProgressionDialogComponent, ProgressionDialogData>(ProgressionDialogComponent, {
+      width: '420px',
+      data: { todoTitle: todo.title }
+    });
+
+    dialogRef.afterClosed().subscribe((result?: RegisterProgressionRequest) => {
+      if (!result) {
+        return;
+      }
+      this.registerProgression(todo.id, result);
+    });
+  }
+
+  onEditDescription(todo: TodoItemDto): void {
+    const dialogRef = this.dialog.open<EditDescriptionDialogComponent, EditDescriptionDialogData>(
+      EditDescriptionDialogComponent,
+      {
+        width: '420px',
+        data: { title: todo.title, description: todo.description }
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result?: UpdateDescriptionRequest) => {
+      if (!result) {
+        return;
+      }
+      this.updateDescription(todo.id, result);
+    });
+  }
+
+  onDelete(todo: TodoItemDto): void {
+    const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData>(ConfirmDialogComponent, {
+      width: '360px',
+      data: {
+        title: 'Eliminar tarea',
+        message: `¿Deseas eliminar "${todo.title}"?`,
+        confirmText: 'Eliminar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      this.deleteTodo(todo.id);
+    });
+  }
+
+  private registerProgression(id: number, request: RegisterProgressionRequest): void {
+    this.registeringMap = { ...this.registeringMap, [id]: true };
+    this.todoItemsService
+      .registerProgression(id, request)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Progreso registrado', 'Cerrar', { duration: 2500 });
+          this.refreshItem(id);
+        },
+        error: (error) => this.showError(error),
+        complete: () => (this.registeringMap = { ...this.registeringMap, [id]: false })
+      });
+  }
+
+  private updateDescription(id: number, request: UpdateDescriptionRequest): void {
+    this.updatingMap = { ...this.updatingMap, [id]: true };
+    this.todoItemsService
+      .updateDescription(id, request)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Descripción actualizada', 'Cerrar', { duration: 2500 });
+          this.refreshItem(id);
+        },
+        error: (error) => this.showError(error),
+        complete: () => (this.updatingMap = { ...this.updatingMap, [id]: false })
+      });
+  }
+
+  private deleteTodo(id: number): void {
+    this.deletingMap = { ...this.deletingMap, [id]: true };
+    this.todoItemsService
+      .removeTodoItem(id)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Tarea eliminada', 'Cerrar', { duration: 2500 });
+          this.todoItems = this.todoItems.filter((item) => item.id !== id);
+        },
+        error: (error) => this.showError(error),
+        complete: () => (this.deletingMap = { ...this.deletingMap, [id]: false })
+      });
+  }
+
+  private refreshItem(id: number): void {
+    this.refreshingMap = { ...this.refreshingMap, [id]: true };
+    this.todoItemsService.getTodoItems().subscribe({
+      next: (items) => (this.todoItems = items),
+      error: (error) => this.showError(error),
+      complete: () => (this.refreshingMap = { ...this.refreshingMap, [id]: false })
+    });
+  }
+
+  private showError(error: any): void {
+    const message = error?.error?.message || error?.message || 'Ha ocurrido un error';
+    this.snackBar.open(message, 'Cerrar', { duration: 4000 });
+    this.loadingList = false;
+  }
 }
