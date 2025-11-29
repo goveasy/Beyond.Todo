@@ -15,20 +15,23 @@ public sealed class TodoItemEFRepository: ITodoItemRepository
 
     public async Task<IReadOnlyCollection<TodoItem>> LoadAsync()
     {
-        return  (await _context.TodoItems.AsNoTracking().ToListAsync()).AsReadOnly();
+        return  (await _context.TodoItems
+            .Include(t => t.Progressions)
+            .AsNoTracking()
+            .ToListAsync()).AsReadOnly();
     }
 
     public async Task SaveAsync(TodoItem item)
     {
-        var entity = await _context.TodoItems.SingleOrDefaultAsync(t => t.Id == item.Id);
+        var exists = await _context.TodoItems.AnyAsync(t => t.Id == item.Id);
 
-        if (entity is null)
+        if (exists)
         {
-            await _context.TodoItems.AddAsync(item);
+            _context.TodoItems.Update(item);
         }
         else
         {
-            _context.Entry(entity).CurrentValues.SetValues(item);
+            await _context.TodoItems.AddAsync(item);
         }
 
         await _context.SaveChangesAsync();
