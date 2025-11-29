@@ -53,7 +53,6 @@ public class ErrorHandlingMiddleware
     private static int GetStatusCode(Exception exception) => exception switch
     {
         ArgumentException => (int)HttpStatusCode.BadRequest,
-        ArgumentNullException => (int)HttpStatusCode.BadRequest,
         InvalidOperationException => (int)HttpStatusCode.BadRequest,
         KeyNotFoundException => (int)HttpStatusCode.NotFound,
         _ => (int)HttpStatusCode.InternalServerError

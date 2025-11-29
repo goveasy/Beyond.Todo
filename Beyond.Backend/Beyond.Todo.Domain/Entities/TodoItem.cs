@@ -39,7 +39,7 @@ public sealed class TodoItem
 
     public void AddProgression(Progression progression)
     {
-        if (progression is null) throw new ArgumentNullException(nameof(progression));
+        if (progression is null) throw new ArgumentException(nameof(progression));
 
         var currentPercent = GetCumulativePercent();
 
