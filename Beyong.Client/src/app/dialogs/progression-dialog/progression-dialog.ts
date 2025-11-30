@@ -10,6 +10,7 @@ import {
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatButton} from '@angular/material/button';
+import {MatNativeDateModule, provideNativeDateAdapter} from '@angular/material/core';
 
 export interface ProgressionDialogData {
   todoTitle: string;
@@ -17,6 +18,7 @@ export interface ProgressionDialogData {
 
 @Component({
   selector: 'app-progression-dialog',
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -27,10 +29,12 @@ export interface ProgressionDialogData {
     MatDatepickerToggle,
     MatInput,
     MatDatepicker,
+    MatNativeDateModule,
     MatDialogActions,
     MatButton,
     MatDialogClose
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './progression-dialog.html',
   styleUrl: './progression-dialog.scss',
 })

@@ -17,6 +17,7 @@ export interface EditDescriptionDialogData {
 
 @Component({
   selector: 'app-edit-description-dialog',
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

@@ -10,7 +10,6 @@ import {
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {MatOption, MatSelect} from '@angular/material/select';
 import {MatButton} from '@angular/material/button';
-import {NgForOf} from '@angular/common';
 
 export interface TodoItemDialogData {
   categories: string[];
@@ -18,6 +17,7 @@ export interface TodoItemDialogData {
 
 @Component({
   selector: 'app-todo-item-dialog',
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -29,7 +29,6 @@ export interface TodoItemDialogData {
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    NgForOf,
     MatInput
   ],
   templateUrl: './todo-item-dialog.html',

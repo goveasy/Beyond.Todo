@@ -17,6 +17,7 @@ export interface ConfirmDialogData {
 
 @Component({
   selector: 'app-confirm-dialog',
+  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogActions,
