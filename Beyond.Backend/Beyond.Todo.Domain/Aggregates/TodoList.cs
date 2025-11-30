@@ -7,9 +7,13 @@ public class TodoList : ITodoList
     private readonly List<TodoItem> _items = new();
     private readonly TextWriter _writer;
 
-    public TodoList(TextWriter? writer = null)
+    public TodoList(List<TodoItem>? items = null)
     {
-        _writer = writer ?? Console.Out;
+        _writer = Console.Out;
+        if (items is not null)
+        {
+            _items = items;
+        }
     }
 
     public IReadOnlyCollection<TodoItem> Items => _items.AsReadOnly();

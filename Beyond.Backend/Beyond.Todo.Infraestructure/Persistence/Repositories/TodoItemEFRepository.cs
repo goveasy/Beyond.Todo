@@ -13,12 +13,12 @@ public sealed class TodoItemEFRepository: ITodoItemRepository
         _context = context;
     }
 
-    public async Task<IReadOnlyCollection<TodoItem>> LoadAsync()
+    public async Task<List<TodoItem>> LoadAsync()
     {
-        return  (await _context.TodoItems
+        return  await _context.TodoItems
             .Include(t => t.Progressions)
             .AsNoTracking()
-            .ToListAsync()).AsReadOnly();
+            .ToListAsync();
     }
 
     public async Task SaveAsync(TodoItem item)

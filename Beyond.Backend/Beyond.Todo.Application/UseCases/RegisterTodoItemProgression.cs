@@ -2,6 +2,7 @@
 
 using Beyond.Todo.Application.Abstractions;
 using Beyond.Todo.Application.Factories;
+using Beyond.Todo.Domain.Aggregates;
 
 namespace Beyond.Todo.Application.UseCases;
 
@@ -16,8 +17,11 @@ public sealed class RegisterTodoItemProgressionHandler
 
     public async Task<RegisterTodoItemProgressionResult> Handle(RegisterTodoItemProgressionCommand command)
     {
+        await Task.Delay(TimeSpan.FromSeconds(5)); // Simular asincronía
         var todoItems = await _todoItemRepository.LoadAsync();
-        var aggregate = TodoListAggregateFactory.CreateFromItems(todoItems);
+
+        // el problema esta al recrear las progresiones se pierde el ID;
+        var aggregate = new TodoList(todoItems);
        
         aggregate.RegisterProgression(command.Id, command.Date, command.Percent);
         var item = aggregate.Items.First(i => i.Id == command.Id);

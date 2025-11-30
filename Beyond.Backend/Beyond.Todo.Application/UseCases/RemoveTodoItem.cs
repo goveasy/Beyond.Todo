@@ -1,5 +1,6 @@
 ﻿using Beyond.Todo.Application.Abstractions;
 using Beyond.Todo.Application.Factories;
+using Beyond.Todo.Domain.Aggregates;
 
 namespace Beyond.Todo.Application.UseCases;
 
@@ -14,7 +15,7 @@ public sealed class RemoveTodoItemHandler
     public async Task<RemoveTodoItemResult> Handle(RemoveTodoItemCommand command)
     {
         var todoItems= await _todoItemRepository.LoadAsync();
-        var aggregate = TodoListAggregateFactory.CreateFromItems(todoItems);
+        var aggregate = new TodoList(todoItems);
 
         aggregate.RemoveItem(command.Id);
 

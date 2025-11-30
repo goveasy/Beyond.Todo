@@ -18,7 +18,7 @@ import {
   ProgressionDialogData
 } from '../../dialogs/progression-dialog/progression-dialog.component';
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../dialogs/confirm-dialog/confirm-dialog.component';
-import {take} from "rxjs";
+import {finalize, take} from "rxjs";
 
 @Component({
   selector: 'app-todo-items-page',
@@ -54,13 +54,17 @@ export class TodoItemsPageComponent implements OnInit {
     }
 
     this.todoItemsService.getTodoItems()
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.loadingList = false;
+        })
+      )
       .subscribe({
         next: (items) => {
           this.todoItems = items;
         },
         error: (error) => this.showError(error),
-        complete: () => (this.loadingList = false)
       });
   }
 
@@ -89,14 +93,18 @@ export class TodoItemsPageComponent implements OnInit {
     this.creatingTodo = true;
     this.todoItemsService
       .createTodoItem(request)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.creatingTodo = false
+        })
+      )
       .subscribe({
         next: () => {
           this.snackBar.open('Tarea creada', 'Cerrar', {duration: 2500});
           this.loadTodoItems(false);
         },
         error: (error) => this.showError(error),
-        complete: () => (this.creatingTodo = false)
       });
   }
 
@@ -153,29 +161,36 @@ export class TodoItemsPageComponent implements OnInit {
     this.registeringMap = {...this.registeringMap, [id]: true};
     this.todoItemsService
       .registerProgression(id, request)
-      .pipe(take(1))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Progreso registrado', 'Cerrar', {duration: 2500});
-          this.refreshItem(id);
-        },
-        error: (error) => this.showError(error),
-        complete: () => (this.registeringMap = {...this.registeringMap, [id]: false})
-      });
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.registeringMap = {...this.registeringMap, [id]: false};
+        })
+      ).subscribe({
+      next: () => {
+        this.snackBar.open('Progreso registrado', 'Cerrar', {duration: 2500});
+        this.refreshItem(id);
+      },
+      error: (error) => this.showError(error),
+    });
   }
 
   private updateDescription(id: number, request: UpdateDescriptionRequest): void {
     this.updatingMap = {...this.updatingMap, [id]: true};
     this.todoItemsService
       .updateDescription(id, request)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.updatingMap = {...this.updatingMap, [id]: false};
+        })
+      )
       .subscribe({
         next: () => {
           this.snackBar.open('Descripción actualizada', 'Cerrar', {duration: 2500});
           this.refreshItem(id);
         },
         error: (error) => this.showError(error),
-        complete: () => (this.updatingMap = {...this.updatingMap, [id]: false})
       });
   }
 
@@ -183,23 +198,33 @@ export class TodoItemsPageComponent implements OnInit {
     this.deletingMap = {...this.deletingMap, [id]: true};
     this.todoItemsService
       .removeTodoItem(id)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.deletingMap = {...this.deletingMap, [id]: false};
+        })
+      )
       .subscribe({
         next: () => {
           this.snackBar.open('Tarea eliminada', 'Cerrar', {duration: 2500});
           this.todoItems = this.todoItems.filter((item) => item.id !== id);
         },
         error: (error) => this.showError(error),
-        complete: () => (this.deletingMap = {...this.deletingMap, [id]: false})
       });
   }
 
   private refreshItem(id: number): void {
     this.refreshingMap = {...this.refreshingMap, [id]: true};
-    this.todoItemsService.getTodoItems().subscribe({
+    this.todoItemsService.getTodoItems()
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.refreshingMap = {...this.refreshingMap, [id]: false};
+        })
+      )
+      .subscribe({
       next: (items) => (this.todoItems = items),
       error: (error) => this.showError(error),
-      complete: () => (this.refreshingMap = {...this.refreshingMap, [id]: false})
     });
   }
 

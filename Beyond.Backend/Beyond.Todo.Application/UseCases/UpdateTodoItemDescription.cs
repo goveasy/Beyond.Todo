@@ -1,6 +1,7 @@
 ﻿
 using Beyond.Todo.Application.Abstractions;
 using Beyond.Todo.Application.Factories;
+using Beyond.Todo.Domain.Aggregates;
 
 namespace Beyond.Todo.Application.UseCases;
 
@@ -17,7 +18,7 @@ public sealed class UpdateTodoItemDescriptionHandler
     public async Task<UpdateTodoItemDescriptionResult> Handle(UpdateTodoItemDescriptionCommand command)
     {
         var todoItems = await _todoItemRepository.LoadAsync();
-        var aggregate = TodoListAggregateFactory.CreateFromItems(todoItems);
+        var aggregate = new TodoList(todoItems);
 
         aggregate.UpdateItem(command.Id, command.NewDescription);
         var item = aggregate.Items.First(item => item.Id == command.Id);

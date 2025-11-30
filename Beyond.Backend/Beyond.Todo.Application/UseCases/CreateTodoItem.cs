@@ -1,6 +1,7 @@
 ﻿
 using Beyond.Todo.Application.Abstractions;
 using Beyond.Todo.Application.Factories;
+using Beyond.Todo.Domain.Aggregates;
 
 namespace Beyond.Todo.Application.UseCases;
 
@@ -27,7 +28,7 @@ public sealed class CreateTodoItemHandler
         }
 
         var todoItems = await _todoItemRepository.LoadAsync();
-        var aggregate = TodoListAggregateFactory.CreateFromItems(todoItems);
+        var aggregate = new TodoList(todoItems);
         var newId = await _todoListRepository.GetNextId();
 
         aggregate.AddItem(newId, command.Title, command.Description, command.Category);
