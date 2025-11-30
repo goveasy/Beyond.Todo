@@ -20,6 +20,8 @@ import {MatIcon} from '@angular/material/icon';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {TodoItemListComponent} from '../../components/todo-item-list/todo-item-list';
 import {MatButton} from '@angular/material/button';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-todo-items-page',
@@ -28,7 +30,9 @@ import {MatButton} from '@angular/material/button';
     MatIcon,
     MatProgressSpinner,
     TodoItemListComponent,
-    MatButton
+    MatButton,
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './todo-items-page.html',
   styleUrl: './todo-items-page.scss',
