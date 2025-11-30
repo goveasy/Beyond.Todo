@@ -6,10 +6,11 @@ import {MatProgressBar} from '@angular/material/progress-bar';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
-import {DatePipe, NgIf} from '@angular/common';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-todo-item',
+  standalone: true,
   imports: [
     MatCard,
     MatAccordion,
@@ -19,7 +20,6 @@ import {DatePipe, NgIf} from '@angular/common';
     MatProgressSpinner,
     MatIcon,
     MatIconButton,
-    NgIf,
     DatePipe
   ],
   templateUrl: './todo-item.html',

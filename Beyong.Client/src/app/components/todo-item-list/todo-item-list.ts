@@ -1,14 +1,12 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {TodoItemDto} from '../../models/todo-item.models';
 import {TodoItemComponent} from '../todo-item/todo-item';
-import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-todo-item-list',
+  standalone: true,
   imports: [
-    TodoItemComponent,
-    NgIf,
-    NgForOf
+    TodoItemComponent
   ],
   templateUrl: './todo-item-list.html',
   styleUrl: './todo-item-list.scss',

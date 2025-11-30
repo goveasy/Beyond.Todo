@@ -18,16 +18,15 @@ import {
 import {ConfirmDialogComponent, ConfirmDialogData} from '../../dialogs/confirm-dialog/confirm-dialog';
 import {MatIcon} from '@angular/material/icon';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {NgIf} from '@angular/common';
 import {TodoItemListComponent} from '../../components/todo-item-list/todo-item-list';
 import {MatButton} from '@angular/material/button';
 
 @Component({
   selector: 'app-todo-items-page',
+  standalone: true,
   imports: [
     MatIcon,
     MatProgressSpinner,
-    NgIf,
     TodoItemListComponent,
     MatButton
   ],
