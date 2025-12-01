@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Beyond.Todo.Domain\Beyond.Todo.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
+  </ItemGroup>
+
 </Project>

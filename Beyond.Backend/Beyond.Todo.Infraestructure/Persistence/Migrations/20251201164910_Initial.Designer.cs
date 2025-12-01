@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Beyond.Todo.Infraestructure.Persistence.Migrations
 {
     [DbContext(typeof(TodoEFDbContext))]
-    [Migration("20251128175302_Initial")]
+    [Migration("20251201164910_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -45,6 +45,15 @@ namespace Beyond.Todo.Infraestructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TodoItems");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = "Work",
+                            Description = "Progreso de la construcion de la aplicacion beyond todo.",
+                            Title = "Construir el sistema Beyond Todo."
+                        });
                 });
 
             modelBuilder.Entity("Beyond.Todo.Infraestructure.Entities.TodoItemCategory", b =>
@@ -55,6 +64,20 @@ namespace Beyond.Todo.Infraestructure.Persistence.Migrations
                     b.HasKey("Category");
 
                     b.ToTable("TodoItemCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Category = "Work"
+                        },
+                        new
+                        {
+                            Category = "Personal"
+                        },
+                        new
+                        {
+                            Category = "Learning"
+                        });
                 });
 
             modelBuilder.Entity("Beyond.Todo.Domain.Entities.TodoItem", b =>
@@ -84,6 +107,29 @@ namespace Beyond.Todo.Infraestructure.Persistence.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("TodoItemId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    Id = 1,
+                                    Date = new DateTime(2025, 11, 29, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    Percent = 25m,
+                                    TodoItemId = 1
+                                },
+                                new
+                                {
+                                    Id = 2,
+                                    Date = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    Percent = 35m,
+                                    TodoItemId = 1
+                                },
+                                new
+                                {
+                                    Id = 3,
+                                    Date = new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                                    Percent = 40m,
+                                    TodoItemId = 1
+                                });
                         });
 
                     b.Navigation("Progressions");

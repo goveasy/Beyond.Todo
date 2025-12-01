@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Beyond.Todo.Infraestructure.Persistence.Migrations
 {
     /// <inheritdoc />
@@ -56,6 +58,31 @@ namespace Beyond.Todo.Infraestructure.Persistence.Migrations
                         principalTable: "TodoItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "TodoItemCategories",
+                column: "Category",
+                values: new object[]
+                {
+                    "Learning",
+                    "Personal",
+                    "Work"
+                });
+
+            migrationBuilder.InsertData(
+                table: "TodoItems",
+                columns: new[] { "Id", "Category", "Description", "Title" },
+                values: new object[] { 1, "Work", "Progreso de la construcion de la aplicacion beyond todo.", "Construir el sistema Beyond Todo." });
+
+            migrationBuilder.InsertData(
+                table: "Progression",
+                columns: new[] { "Id", "Date", "Percent", "TodoItemId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 11, 29, 0, 0, 0, 0, DateTimeKind.Utc), 25m, 1 },
+                    { 2, new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Utc), 35m, 1 },
+                    { 3, new DateTime(2025, 12, 1, 0, 0, 0, 0, DateTimeKind.Utc), 40m, 1 }
                 });
 
             migrationBuilder.CreateIndex(
