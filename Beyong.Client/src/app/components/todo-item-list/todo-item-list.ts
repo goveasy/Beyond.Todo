@@ -12,7 +12,7 @@ import {TodoItemComponent} from '../todo-item/todo-item';
   styleUrl: './todo-item-list.scss',
 })
 export class TodoItemListComponent {
-  @Input() todoItems: TodoItemDto[] | null = [];
+  @Input() todoItems: TodoItemDto[] = [];
   @Input() registeringMap: Record<number, boolean> = {};
   @Input() updatingMap: Record<number, boolean> = {};
   @Input() deletingMap: Record<number, boolean> = {};

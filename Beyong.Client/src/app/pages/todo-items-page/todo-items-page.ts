@@ -1,27 +1,28 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
   CreateTodoItemRequest,
   RegisterProgressionRequest,
   TodoItemDto,
   UpdateDescriptionRequest
 } from '../../models/todo-item.models';
-import {TodoItemsService} from '../../services/todo-items.service';
-import {MatDialog} from '@angular/material/dialog';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {finalize, take} from 'rxjs';
-import {TodoItemDialogComponent, TodoItemDialogData} from '../../dialogs/todo-item-dialog/todo-item-dialog';
-import {ProgressionDialogComponent, ProgressionDialogData} from '../../dialogs/progression-dialog/progression-dialog';
+import { TodoItemsService } from '../../services/todo-items.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { finalize, take } from 'rxjs';
+import { TodoItemDialogComponent, TodoItemDialogData } from '../../dialogs/todo-item-dialog/todo-item-dialog';
+import { ProgressionDialogComponent, ProgressionDialogData } from '../../dialogs/progression-dialog/progression-dialog';
 import {
   EditDescriptionDialogComponent,
   EditDescriptionDialogData
 } from '../../dialogs/edit-description-dialog/edit-description-dialog';
-import {ConfirmDialogComponent, ConfirmDialogData} from '../../dialogs/confirm-dialog/confirm-dialog';
-import {MatIcon} from '@angular/material/icon';
-import {MatProgressSpinner} from '@angular/material/progress-spinner';
-import {TodoItemListComponent} from '../../components/todo-item-list/todo-item-list';
-import {MatButton} from '@angular/material/button';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../dialogs/confirm-dialog/confirm-dialog';
+import { MatIcon } from '@angular/material/icon';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { TodoItemListComponent } from '../../components/todo-item-list/todo-item-list';
+import { MatButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-todo-items-page',
@@ -31,6 +32,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatProgressSpinner,
     TodoItemListComponent,
     MatButton,
+    MatDivider,
     MatDialogModule,
     MatSnackBarModule
   ],
@@ -38,22 +40,21 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
   styleUrl: './todo-items-page.scss',
 })
 export class TodoItemsPageComponent implements OnInit {
-  todoItems: TodoItemDto[] = [];
-  categories: string[] = [];
+  private readonly todoItemsService = inject(TodoItemsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
-  loadingList = false;
-  creatingTodo = false;
-  registeringMap: Record<number, boolean> = {};
-  updatingMap: Record<number, boolean> = {};
-  deletingMap: Record<number, boolean> = {};
-  refreshingMap: Record<number, boolean> = {};
+  readonly todoItems = signal<TodoItemDto[]>([]);
+  readonly categories = signal<string[]>([]);
 
-  constructor(
-    private readonly todoItemsService: TodoItemsService,
-    private readonly dialog: MatDialog,
-    private readonly snackBar: MatSnackBar
-  ) {
-  }
+  readonly loadingList = signal(false);
+  readonly creatingTodo = signal(false);
+  readonly registeringMap = signal<Record<number, boolean>>({});
+  readonly updatingMap = signal<Record<number, boolean>>({});
+  readonly deletingMap = signal<Record<number, boolean>>({});
+  readonly refreshingMap = signal<Record<number, boolean>>({});
+
+  readonly hasItems = computed(() => this.todoItems().length > 0);
 
   ngOnInit(): void {
     this.loadCategories();
@@ -62,28 +63,24 @@ export class TodoItemsPageComponent implements OnInit {
 
   loadTodoItems(showLoader = true): void {
     if (showLoader) {
-      this.loadingList = true;
+      this.loadingList.set(true);
     }
 
-    this.todoItemsService.getTodoItems()
+    this.todoItemsService
+      .getTodoItems()
       .pipe(
         take(1),
-        finalize(() => {
-          console.log('Loading TodoItems');
-          this.loadingList = false;
-        })
+        finalize(() => this.loadingList.set(false))
       )
       .subscribe({
-        next: (items) => {
-          this.todoItems = items;
-        },
+        next: (items) => this.todoItems.set(items ?? []),
         error: (error) => this.showError(error),
       });
   }
 
   loadCategories(): void {
     this.todoItemsService.getCategories().subscribe({
-      next: (categories) => (this.categories = categories ?? []),
+      next: (categories) => this.categories.set(categories ?? []),
       error: (error) => this.showError(error)
     });
   }
@@ -91,7 +88,8 @@ export class TodoItemsPageComponent implements OnInit {
   openCreateDialog(): void {
     const dialogRef = this.dialog.open<TodoItemDialogComponent, TodoItemDialogData>(TodoItemDialogComponent, {
       width: '520px',
-      data: {categories: this.categories}
+      data: {categories: this.categories()},
+      autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe((value?: CreateTodoItemRequest) => {
@@ -103,14 +101,12 @@ export class TodoItemsPageComponent implements OnInit {
   }
 
   createTodoItem(request: CreateTodoItemRequest): void {
-    this.creatingTodo = true;
+    this.creatingTodo.set(true);
     this.todoItemsService
       .createTodoItem(request)
       .pipe(
         take(1),
-        finalize(() => {
-          this.creatingTodo = false
-        })
+        finalize(() => this.creatingTodo.set(false))
       )
       .subscribe({
         next: () => {
@@ -124,7 +120,8 @@ export class TodoItemsPageComponent implements OnInit {
   onRegisterProgression(todo: TodoItemDto): void {
     const dialogRef = this.dialog.open<ProgressionDialogComponent, ProgressionDialogData>(ProgressionDialogComponent, {
       width: '420px',
-      data: {todoTitle: todo.title}
+      data: {todoTitle: todo.title},
+      autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe((result?: RegisterProgressionRequest) => {
@@ -140,7 +137,8 @@ export class TodoItemsPageComponent implements OnInit {
       EditDescriptionDialogComponent,
       {
         width: '420px',
-        data: {title: todo.title, description: todo.description}
+        data: {title: todo.title, description: todo.description},
+        autoFocus: false
       }
     );
 
@@ -159,7 +157,8 @@ export class TodoItemsPageComponent implements OnInit {
         title: 'Eliminar tarea',
         message: `¿Deseas eliminar "${todo.title}"?`,
         confirmText: 'Eliminar'
-      }
+      },
+      autoFocus: false
     });
 
     dialogRef.afterClosed().subscribe((confirmed) => {
@@ -171,14 +170,12 @@ export class TodoItemsPageComponent implements OnInit {
   }
 
   private registerProgression(id: number, request: RegisterProgressionRequest): void {
-    this.registeringMap = {...this.registeringMap, [id]: true};
+    this.registeringMap.update((map) => ({...map, [id]: true}));
     this.todoItemsService
       .registerProgression(id, request)
       .pipe(
         take(1),
-        finalize(() => {
-          this.registeringMap = {...this.registeringMap, [id]: false};
-        })
+        finalize(() => this.registeringMap.update((map) => ({...map, [id]: false})))
       ).subscribe({
       next: () => {
         this.snackBar.open('Progreso registrado', 'Cerrar', {duration: 2500});
@@ -189,14 +186,12 @@ export class TodoItemsPageComponent implements OnInit {
   }
 
   private updateDescription(id: number, request: UpdateDescriptionRequest): void {
-    this.updatingMap = {...this.updatingMap, [id]: true};
+    this.updatingMap.update((map) => ({...map, [id]: true}));
     this.todoItemsService
       .updateDescription(id, request)
       .pipe(
         take(1),
-        finalize(() => {
-          this.updatingMap = {...this.updatingMap, [id]: false};
-        })
+        finalize(() => this.updatingMap.update((map) => ({...map, [id]: false})))
       )
       .subscribe({
         next: () => {
@@ -208,35 +203,31 @@ export class TodoItemsPageComponent implements OnInit {
   }
 
   private deleteTodo(id: number): void {
-    this.deletingMap = {...this.deletingMap, [id]: true};
+    this.deletingMap.update((map) => ({...map, [id]: true}));
     this.todoItemsService
       .removeTodoItem(id)
       .pipe(
         take(1),
-        finalize(() => {
-          this.deletingMap = {...this.deletingMap, [id]: false};
-        })
+        finalize(() => this.deletingMap.update((map) => ({...map, [id]: false})))
       )
       .subscribe({
         next: () => {
           this.snackBar.open('Tarea eliminada', 'Cerrar', {duration: 2500});
-          this.todoItems = this.todoItems.filter((item) => item.id !== id);
+          this.todoItems.update((items) => items.filter((item) => item.id !== id));
         },
         error: (error) => this.showError(error),
       });
   }
 
   private refreshItem(id: number): void {
-    this.refreshingMap = {...this.refreshingMap, [id]: true};
+    this.refreshingMap.update((map) => ({...map, [id]: true}));
     this.todoItemsService.getTodoItems()
       .pipe(
         take(1),
-        finalize(() => {
-          this.refreshingMap = {...this.refreshingMap, [id]: false};
-        })
+        finalize(() => this.refreshingMap.update((map) => ({...map, [id]: false})))
       )
       .subscribe({
-        next: (items) => (this.todoItems = items),
+        next: (items) => this.todoItems.set(items ?? []),
         error: (error) => this.showError(error),
       });
   }
@@ -244,6 +235,6 @@ export class TodoItemsPageComponent implements OnInit {
   private showError(error: any): void {
     const message = error?.error?.message || error?.message || 'Ha ocurrido un error';
     this.snackBar.open(message, 'Cerrar', {duration: 4000});
-    this.loadingList = false;
+    this.loadingList.set(false);
   }
 }

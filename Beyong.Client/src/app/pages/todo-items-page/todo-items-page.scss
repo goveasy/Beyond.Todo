@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .subtitle {
@@ -11,10 +11,12 @@
 }
 
 .list-container {
-  background: #fafafa;
-  border-radius: 8px;
-  padding: 12px 12px 4px;
-  border: 1px solid #e0e0e0;
+  background: var(--mat-sys-surface-container);
+  border-radius: 12px;
+  padding: 16px 16px 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  margin-top: 16px;
 }
 
 .list-header {
@@ -25,7 +27,7 @@
 }
 
 .list-header .title {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 mat-progress-spinner {

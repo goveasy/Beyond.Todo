@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
@@ -11,10 +11,9 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TodoItemsService {
+  private readonly http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl ?? '';
   private readonly todoItemsUrl = `${this.baseUrl}/TodoItems`;
-
-  constructor(private readonly http: HttpClient) {}
 
   getTodoItems(): Observable<TodoItemDto[]> {
     return this.http.get<TodoItemDto[]>(this.todoItemsUrl);

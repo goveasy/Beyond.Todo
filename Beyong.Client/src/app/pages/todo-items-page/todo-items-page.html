@@ -1,24 +1,25 @@
-<div class="page-header">
+<section class="page-header">
   <div>
     <h1>Todo Items</h1>
     <p class="subtitle">Gestiona tus tareas y su progreso.</p>
   </div>
-  <button mat-flat-button color="primary" (click)="openCreateDialog()" [disabled]="creatingTodo">
+  <button mat-flat-button color="primary" (click)="openCreateDialog()" [disabled]="creatingTodo()">
     <mat-icon>add</mat-icon>
     Nuevo Todo
-    @if (creatingTodo){
+    @if (creatingTodo()){
       <mat-progress-spinner diameter="20" strokeWidth="3"
                             mode="indeterminate"></mat-progress-spinner>
     }
-
   </button>
-</div>
+</section>
 
-<div class="list-container">
+<mat-divider></mat-divider>
+
+<section class="list-container">
   <div class="list-header">
     <div class="title">Listado</div>
 
-    @if (loadingList) {
+    @if (loadingList()) {
       <div class="spinner">
         <mat-progress-spinner diameter="24" strokeWidth="4" mode="indeterminate"></mat-progress-spinner>
       </div>
@@ -26,14 +27,13 @@
 
   </div>
   <app-todo-item-list
-    [todoItems]="todoItems"
-    [registeringMap]="registeringMap"
-    [updatingMap]="updatingMap"
-    [deletingMap]="deletingMap"
-    [refreshingMap]="refreshingMap"
+    [todoItems]="todoItems()"
+    [registeringMap]="registeringMap()"
+    [updatingMap]="updatingMap()"
+    [deletingMap]="deletingMap()"
+    [refreshingMap]="refreshingMap()"
     (addProgression)="onRegisterProgression($event)"
     (editDescription)="onEditDescription($event)"
     (delete)="onDelete($event)">
   </app-todo-item-list>
-</div>
-
+</section>
