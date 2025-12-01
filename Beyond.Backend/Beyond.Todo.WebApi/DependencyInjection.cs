@@ -34,6 +34,8 @@ public static class DependencyInjection
         services.AddScoped<GetTodoItemsHandler>();
         services.AddScoped<GetTodoItemsCategoriesHandler>();
 
+        services.AddSingleton<DatabaseInitializer>();
+
         return services;
     }
 }

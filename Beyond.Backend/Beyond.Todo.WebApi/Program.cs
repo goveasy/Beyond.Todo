@@ -40,4 +40,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+var initializer = app.Services.GetRequiredService<DatabaseInitializer>();
+
+await initializer.Initialize();
+
 app.Run();
