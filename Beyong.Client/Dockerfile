@@ -11,6 +11,13 @@ RUN npm run build -- --configuration production
 # Serve with nginx
 FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist/Beyong.Client21/browser/ /usr/share/nginx/html/
+
+# Remove the default nginx landing page so the Angular build replaces it.
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy the built Angular assets (the "browser" output) regardless of the
+# project name. The wildcard keeps the image working if the Angular project
+# name changes.
+COPY --from=build /app/dist/*/browser/ /usr/share/nginx/html/
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
