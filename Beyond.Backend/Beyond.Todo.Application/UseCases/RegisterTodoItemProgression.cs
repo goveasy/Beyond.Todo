@@ -1,7 +1,4 @@
-﻿
-
-using Beyond.Todo.Application.Abstractions;
-using Beyond.Todo.Application.Factories;
+﻿using Beyond.Todo.Application.Abstractions;
 using Beyond.Todo.Domain.Aggregates;
 
 namespace Beyond.Todo.Application.UseCases;
