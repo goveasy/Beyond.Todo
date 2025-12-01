@@ -9,7 +9,7 @@ public sealed class Progression
     private Progression() { }
     public Progression(DateTime date, decimal percent)
     {
-        if (percent <= 0 || percent >= 100)
+        if (percent <= 0 || percent > 100)
         {
             throw new ArgumentException("Progress percent must be between 0 and 100.", nameof(percent));
         }
