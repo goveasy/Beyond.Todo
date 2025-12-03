@@ -3,6 +3,9 @@ using Beyond.Todo.Application.UseCases;
 using Beyond.Todo.Infraestructure.Caching;
 using Beyond.Todo.Infraestructure.Persistence;
 using Beyond.Todo.Infraestructure.Persistence.Repositories;
+using Beyond.Todo.Infraestructure.Persistence.Services;
+using Medallion.Threading;
+using Medallion.Threading.Postgres;
 using Microsoft.EntityFrameworkCore;
 
 namespace Beyond.Todo.WebApi;
@@ -24,6 +27,12 @@ public static class DependencyInjection
             options.Configuration = configuration.GetConnectionString("Redis");
         });
 
+        services.AddSingleton<IDistributedLockProvider>((sp) =>
+        {
+            return new PostgresDistributedSynchronizationProvider(configuration.GetConnectionString("TodoDb")!);
+        });
+
+        services.AddScoped<IDataBaseDistributedLockService, DatabaseDistributedLockService>();
         services.AddScoped<ITodoItemRepository, TodoItemEFRepository>();
         services.AddScoped<ITodoListRepository, TodoListEFRepository>();
         services.AddScoped<ICategoryCacheService, CategoryCacheService>();
