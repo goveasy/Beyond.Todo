@@ -3,4 +3,6 @@
   <Project Path="Beyond.Todo.Domain/Beyond.Todo.Domain.csproj" Id="5f8d0c33-7a91-4b09-9aaa-738f944a3f40" />
   <Project Path="Beyond.Todo.Infraestructure/Beyond.Todo.Infraestructure.csproj" Id="bbc6cd1d-147f-4231-b247-445697d1db78" />
   <Project Path="Beyond.Todo.WebApi/Beyond.Todo.WebApi.csproj" Id="9dcdea59-e7cf-4b4a-8026-c05c1d1c9edf" />
+  <Project Path="Beyond.Todo.Domain.Tests/Beyond.Todo.Domain.Tests.csproj" Id="a01f2f09-23b1-4f5a-bd1e-01d3ab77ac25" />
+  <Project Path="Beyond.Todo.Application.Tests/Beyond.Todo.Application.Tests.csproj" Id="1d47476e-2a9e-4ca4-aba7-2d9e6fc4b6ae" />
 </Solution>
